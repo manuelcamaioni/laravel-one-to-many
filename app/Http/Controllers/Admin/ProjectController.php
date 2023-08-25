@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Admin\Project;
+use App\Models\Admin\Type;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,7 +26,8 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return view('admin.projects.create');
+        $types = Type::all();
+        return view('admin.projects.create', compact('types'));
     }
 
     /**
@@ -33,24 +35,23 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-
         $data = $request->validate([
             'title' => ['required', 'unique:projects', 'max:255'],
             'description' => ['min:10'],
             'date' => ['date'],
-            'image' => ['image']
+            'image' => ['image'],
+            'type_id' => 'required|exists:types,id'
         ]);
 
-
-        if ($request->hasFile('image')){
-            $img_path = Storage::put('uploads', $request['image']);
+        if ($request->hasFile('image')) {
+            $img_path = Storage::put('uploads', $request->file('image'));
             $data['image'] = $img_path;
         }
 
-
-
         $data['slug'] = Str::of($data['title'])->slug('-');
+
         $newProject = Project::create($data);
+
 
         return redirect()->route('admin.projects.index');
     }
@@ -61,6 +62,7 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
 
+
         return view('admin.projects.show', compact('project'));
     }
 
@@ -69,8 +71,8 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-
-        return view('admin.projects.edit', compact('project'));
+        $types = Type::all();
+        return view('admin.projects.edit', compact('project'), compact('types'));
 
 
     }
@@ -81,9 +83,11 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         $request->validate([
-            'title' => ['required', 'max:255', Rule::unique('projects')->ignore($project->id)],
-            'link' => ['url'],
-            'date' => ['date']
+            'title' => ['required', 'max:255'],
+            'description' => ['min:10'],
+            'date' => ['date'],
+            'image' => ['image'],
+            'type_id' => 'required|exists:types,id'
         ]);
 
         $data = $request->all();
