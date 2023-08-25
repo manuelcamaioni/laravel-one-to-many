@@ -36,9 +36,30 @@
                         value="{{ old('title', $project->title) }}">
                 </div>
 
+                @error('type')
+                    <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
                 <div class="mb-3">
-                    <label for="image" class="d-block mb-2">Image</label>
-                    <input type="file" name="image" id="image" value={{ old('image', '') }}>
+                    <label for="types" class="form-label">
+                        Type
+                    </label>
+                    <select name="type_id" id="type_id" class="form-select"
+                        value="{{ old('type_id', $project->type_id) }}">
+
+                        @foreach ($types as $type)
+                            <option value="{{ $type->id }}" {{ $project->type_id == $type->id ? 'selected' : '' }}>
+                                {{ $type->name }}</option>
+                        @endforeach
+
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="currentImage" class="form-label mb-2">Current Image:</label>
+                    <p>{{ $project->image }}</p>
+
+                    <p>Upload New Image:</p>
+                    <input type="file" name="image" id="image">
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">

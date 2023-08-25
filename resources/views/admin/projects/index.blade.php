@@ -10,6 +10,7 @@
                         <tr>
                             <th scope="col">Id</th>
                             <th scope="col">Title</th>
+                            <th scope="col">Type</th>
                             <th scope="col">Date</th>
                             <th scope="col">Slug</th>
                             <th></th>
@@ -26,6 +27,9 @@
                                     <strong>
                                         {{ $project->title }}
                                     </strong>
+                                </td>
+                                <td>
+                                    {{ $project->type->name }}
                                 </td>
                                 <td>
                                     {{ $project->date }}
